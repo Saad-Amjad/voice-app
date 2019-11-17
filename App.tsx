@@ -37,7 +37,6 @@ export default class FetchExample extends React.Component {
       );
     }
     return (
-      // Try setting `flexDirection` to `column`.
       <View
         style={{
           flex: 1,
