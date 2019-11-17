@@ -1,19 +1,66 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-    </View>
-  );
+import {
+  FlatList,
+  ActivityIndicator,
+  Text,
+  View,
+  Platform,
+  Linking
+} from 'react-native';
+export default class FetchExample extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { isLoading: true };
+  }
+  componentDidMount() {
+    return fetch('http://facebook.github.io/react-native/movies.json')
+      .then(response => response.json())
+      .then(responseJson => {
+        this.setState(
+          {
+            isLoading: false,
+            dataSource: responseJson.movies
+          },
+          function() {}
+        );
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+  render() {
+    if (this.state.isLoading) {
+      return (
+        <View>
+          <ActivityIndicator />
+        </View>
+      );
+    }
+    return (
+      // Try setting `flexDirection` to `column`.
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'stretch'
+        }}
+      >
+        <View style={{ backgroundColor: 'steelblue' }}>
+          <Text>Voice App</Text>
+        </View>
+        <View style={{ backgroundColor: 'skyblue' }}>
+          <FlatList
+            data={this.state.dataSource}
+            renderItem={({ item }) => (
+              <Text>
+                {item.title}, {item.releaseYear}
+              </Text>
+            )}
+            keyExtractor={({ id }, index) => id}
+          />
+        </View>
+      </View>
+    );
+  }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
